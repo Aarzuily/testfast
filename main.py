@@ -1,14 +1,16 @@
-from typing import Optional
-
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
+class Inputtxt(BaseModel):
+    text: str
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+class Outpttxt(BaseModel):
+    processed_text: str
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.post("/process_text/", response_model=Outpttxt)
+
+async def process_text(request: Inputtxt):
+    capitalized_text = request.text.upper()
+    return Outpttxt(processed_text=capitalized_text)
